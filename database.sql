@@ -17,7 +17,7 @@ CREATE TABLE tree (
 	estate_id UUID NOT NULL,
 	x_axis INT NOT NULL,
 	y_axis INT NOT NULL,
-	heigth INT NOT NULL,
+	height INT NOT NULL,
 	CONSTRAINT tree_pkey PRIMARY KEY (id),
 	CONSTRAINT tree_estate_fk FOREIGN KEY (estate_id) REFERENCES estate(id)
 );

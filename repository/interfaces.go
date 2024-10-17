@@ -14,5 +14,7 @@ import (
 type RepositoryInterface interface {
 	GetTestById(ctx context.Context, input GetTestByIdInput) (output GetTestByIdOutput, err error)
 	CreateEstate(ctx context.Context, estate *entity.Estate) (id uuid.UUID, err error)
-	CreateTree(ctx context.Context, tree entity.Tree) (id uuid.UUID, err error)
+	CreateTree(ctx context.Context, tree *entity.Tree) (id uuid.UUID, err error)
+	GetEstateById(ctx context.Context, id uuid.UUID) (estate *entity.Estate, err error)
+	GetTreesByEstateId(ctx context.Context, id uuid.UUID) (trees []entity.Tree, err error)
 }
