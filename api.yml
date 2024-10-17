@@ -39,6 +39,130 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+  /estate:
+    post:
+      summary: Create new estate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateEstateRequest"
+      responses:
+        '201':
+          description: Success
+          content:
+            application/json:    
+              schema:
+                $ref: "#/components/schemas/CreateEstateResponse"
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /estate/{id}/tree:
+    post:
+      summary: Create new tree
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTreeRequest"
+      responses:
+        '201':
+          description: Success
+          content:
+            application/json:    
+              schema:
+                $ref: "#/components/schemas/CreateTreeResponse"
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /estate/{id}/stats:
+    get:
+      summary: The stats of the tree in the estate.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:    
+              schema:
+                $ref: "#/components/schemas/EstateStatResponse"
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /estate/{id}/drone-plan:
+    get:
+      summary: Sum distance of the drone monitoring travel in the estate.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:    
+              schema:
+                $ref: "#/components/schemas/EstateDronePlanResponse"
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 components:
   schemas:
     HelloResponse:
@@ -49,6 +173,92 @@ components:
         message:
           type: string
           example: Hello, World!
+    CreateEstateRequest:
+      type: object
+      required:
+        - length
+        - width
+      properties:
+        length:
+          type: integer
+          example: 10
+          x-oapi-codegen-extra-tags:
+            validate: required,min=1,max=50000
+          minimum: 1
+          maximum: 50000
+        width:
+          type: integer
+          example: 10
+          x-oapi-codegen-extra-tags:
+            validate: required,min=1,max=50000
+          minimum: 1
+          maximum: 50000
+    CreateEstateResponse:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          example: adfef8e2-d449-4bd0-a7df-91b7a3a6c51a
+    CreateTreeRequest:
+      type: object
+      required:
+        - x
+        - y
+        - height
+      properties:
+        x:
+          type: integer
+          example: 1
+          x-oapi-codegen-extra-tags:
+            validate: required,min=1,max=50000
+        y:
+          type: integer
+          example: 1
+          x-oapi-codegen-extra-tags:
+            validate: required,min=1,max=50000
+        height:
+          type: integer
+          example: 10   
+          x-oapi-codegen-extra-tags:
+            validate: required,min=1,max=30
+    CreateTreeResponse:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          example: adfef8e2-d449-4bd0-a7df-91b7a3a6c51a  
+    EstateStatResponse:
+      type: object
+      required:
+        - count
+        - max
+        - min 
+        - median
+      properties:
+        count:
+          type: integer
+          example: 1 
+        max:
+          type: integer
+          example: 1
+        min:
+          type: integer
+          example: 1
+        median:
+          type: integer
+          example: 1    
+    EstateDronePlanResponse:
+      type: object
+      required:
+        - distance
+      properties:
+        message:
+          type: string
+          example: adfef8e2-d449-4bd0-a7df-91b7a3a6c51a 
     ErrorResponse:
       type: object
       required:
