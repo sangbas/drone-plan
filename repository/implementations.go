@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 
 	"github.com/SawitProRecruitment/UserService/entity"
@@ -76,6 +77,26 @@ func (r *Repository) GetTreesByEstateId(ctx context.Context, id uuid.UUID) (tree
 			Height:   height,
 		}
 		trees = append(trees, tree)
+	}
+
+	return
+}
+
+func (r *Repository) GetEstateStat(ctx context.Context, id uuid.UUID) (estateStat EstateStat, err error) {
+	var count int
+	var max, min, median sql.NullInt32
+	query := `SELECT count(height), max(height), min(height), PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY height) 
+				FROM tree t 
+				WHERE estate_id = $1`
+	err = r.Db.QueryRowContext(ctx, query, id).Scan(&count, &max, &min, &median)
+	if err != nil {
+		return
+	}
+	estateStat = EstateStat{
+		Count:  count,
+		Max:    int(max.Int32),
+		Min:    int(min.Int32),
+		Median: int(median.Int32),
 	}
 
 	return

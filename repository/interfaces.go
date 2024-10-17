@@ -17,4 +17,5 @@ type RepositoryInterface interface {
 	CreateTree(ctx context.Context, tree *entity.Tree) (id uuid.UUID, err error)
 	GetEstateById(ctx context.Context, id uuid.UUID) (estate *entity.Estate, err error)
 	GetTreesByEstateId(ctx context.Context, id uuid.UUID) (trees []entity.Tree, err error)
+	GetEstateStat(ctx context.Context, id uuid.UUID) (estateStat EstateStat, err error)
 }

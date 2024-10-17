@@ -8,3 +8,10 @@ type GetTestByIdInput struct {
 type GetTestByIdOutput struct {
 	Name string
 }
+
+type EstateStat struct {
+	Count  int
+	Max    int
+	Min    int
+	Median int
+}

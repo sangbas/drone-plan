@@ -95,8 +95,26 @@ func (s *Server) PostEstateIdTree(ctx echo.Context, id string) error {
 }
 
 func (s *Server) GetEstateIdStats(ctx echo.Context, estateID string) error {
-	var resp generated.HelloResponse
-	resp.Message = fmt.Sprintf("Hello User %s", estateID)
+	estateId, err := uuid.Parse(estateID)
+	if err != nil {
+		return ctx.JSON(http.StatusBadRequest, entity.BadRequestError)
+	}
+
+	estateStat, err := s.Repository.GetEstateStat(ctx.Request().Context(), estateId)
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, entity.InternalServerError)
+	}
+
+	if estateStat.Count == 0 {
+		return ctx.JSON(http.StatusNotFound, entity.NewErrorResponse("estate id not found"))
+	}
+
+	resp := generated.EstateStatResponse{
+		Count:  estateStat.Count,
+		Max:    estateStat.Max,
+		Min:    estateStat.Min,
+		Median: estateStat.Median,
+	}
 	return ctx.JSON(http.StatusOK, resp)
 }
 
