@@ -5,8 +5,19 @@
 -- 3. How you name the fields.
 -- In this assignment we will use PostgreSQL as the database.
 
--- This is test table. Remove this table and replace with your own tables. 
-CREATE TABLE test (
-	id serial PRIMARY KEY,
-	name VARCHAR ( 50 ) UNIQUE NOT NULL,
+CREATE TABLE estate (
+	id UUID NOT NULL,
+	length INT NOT NULL,
+	width INT NOT NULL,
+	CONSTRAINT estate_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE tree (
+	id UUID NOT NULL,
+	estate_id UUID NOT NULL,
+	x_axis INT NOT NULL,
+	y_axis INT NOT NULL,
+	heigth INT NOT NULL,
+	CONSTRAINT tree_pkey PRIMARY KEY (id),
+	CONSTRAINT tree_estate_fk FOREIGN KEY (estate_id) REFERENCES estate(id)
 );
