@@ -144,6 +144,11 @@ paths:
           required: true
           schema:
             type: string
+        - name: max-distance
+          in: query
+          required: false
+          schema:
+            type: integer
       responses:
         '200':
           description: Success
@@ -259,6 +264,13 @@ components:
         distance:
           type: integer
           example: 200 
+        rest: 
+          type: object 
+          properties:
+            x:
+              type: integer 
+            y:
+              type: integer
     ErrorResponse:
       type: object
       required:
