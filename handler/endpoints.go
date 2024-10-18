@@ -9,6 +9,7 @@ import (
 
 	"github.com/SawitProRecruitment/UserService/entity"
 	"github.com/SawitProRecruitment/UserService/generated"
+	"github.com/SawitProRecruitment/UserService/util"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 )
@@ -119,7 +120,59 @@ func (s *Server) GetEstateIdStats(ctx echo.Context, estateID string) error {
 }
 
 func (s *Server) GetEstateIdDronePlan(ctx echo.Context, estateID string) error {
-	var resp generated.HelloResponse
-	resp.Message = fmt.Sprintf("Hello User %s", estateID)
+	estateId, err := uuid.Parse(estateID)
+	if err != nil {
+		return ctx.JSON(http.StatusBadRequest, entity.BadRequestError)
+	}
+
+	estate, err := s.Repository.GetEstateById(ctx.Request().Context(), estateId)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return ctx.JSON(http.StatusNotFound, entity.NewErrorResponse("estate id not found"))
+		}
+		return ctx.JSON(http.StatusInternalServerError, entity.InternalServerError)
+	}
+
+	trees, err := s.Repository.GetTreesByEstateId(ctx.Request().Context(), estateId)
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, entity.InternalServerError)
+	}
+
+	field := make([][]int, estate.Length)
+	for i := range field {
+		field[i] = make([]int, estate.Width)
+	}
+
+	for _, tree := range trees {
+		field[tree.XAxis-1][tree.YAxis-1] = tree.Height
+	}
+
+	var currentHeight, distance int
+	for y := 0; y < estate.Width; y++ {
+		if y%2 == 0 {
+			for x := 0; x < estate.Length; x++ {
+				distance += 10
+				if x+1 < estate.Length && field[x+1][y]+1 != currentHeight {
+					distance = distance + util.Abs(currentHeight-(field[x+1][y]+1))
+					currentHeight = field[x+1][y] + 1
+				}
+			}
+		} else {
+			for x := estate.Length - 1; x >= 0; x-- {
+				distance += 10
+				if x+1 < estate.Length && field[x+1][y]+1 != currentHeight {
+					distance = distance + util.Abs(currentHeight-(field[x+1][y]+1))
+					currentHeight = field[x+1][y] + 1
+				}
+			}
+		}
+		// if last plot backward 10 m and add 1 m for landing
+		if y == estate.Width-1 {
+			distance = distance - 10 + 1
+		}
+	}
+
+	var resp generated.EstateDronePlanResponse
+	resp.Distance = distance
 	return ctx.JSON(http.StatusOK, resp)
 }

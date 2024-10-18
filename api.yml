@@ -256,9 +256,9 @@ components:
       required:
         - distance
       properties:
-        message:
-          type: string
-          example: adfef8e2-d449-4bd0-a7df-91b7a3a6c51a 
+        distance:
+          type: integer
+          example: 200 
     ErrorResponse:
       type: object
       required:
